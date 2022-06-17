@@ -37,11 +37,11 @@
       </MenuBar>
    </top>
    <center>
-      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+      <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
-          <Tab text="redis key">
+          <Tab fx:id="keyTab" text="redis key">
                <content>
-                  <TextArea fx:id="textArea" prefHeight="200.0" prefWidth="200.0" />
+                  <TextArea fx:id="showArea" prefHeight="200.0" prefWidth="200.0" />
                </content>
             </Tab>
         </tabs>

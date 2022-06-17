@@ -15,6 +15,14 @@
 
 
     <dependencies>
+
+<!--        github 私库中  wuma2020  -->
+        <dependency>
+            <groupId>wuma2080</groupId>
+            <artifactId>wuwuwu</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
         <!--        java fx ui组件    -->
         <dependency>
             <groupId>com.jfoenix</groupId>
@@ -24,5 +32,13 @@
 
 
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>服务id</id>   
+            <name>GitHub 账号名称 Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/Github账号名称/用于保存的仓库名称</url> 
+        </repository>
+    </distributionManagement>
 
 </project>
