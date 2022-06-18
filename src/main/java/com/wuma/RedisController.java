@@ -4,19 +4,32 @@
 
 package com.wuma;
 
+import cn.hutool.core.util.StrUtil;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+
+import com.wuma.redis.RedisApplication;
+import com.wuwu.base.client.WuwuApplication;
+import com.wuwu.base.client.WuwuFutureClient;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class RedisController {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @FXML // ResourceBundle that was given to the FXMLLoader
     private ResourceBundle resources;
@@ -43,7 +56,7 @@ public class RedisController {
     private JFXButton sendCommanButton; // Value injected by FXMLLoader
 
     @FXML // fx:id="listView"
-    private JFXListView<?> listView; // Value injected by FXMLLoader
+    private JFXListView<Object> listView; // Value injected by FXMLLoader
 
     /**
      * todo 发送命令，然后显示到右侧的showArea中，后续做成tabPane的添加
@@ -52,8 +65,8 @@ public class RedisController {
     @FXML
     void sendComman(ActionEvent event) {
 
-
-
+    // TODO 发送命令，然后显示到右侧的showArea中，后续做成tabPane的添加
+        System.out.println("点击事件");
 
     }
 
@@ -67,7 +80,31 @@ public class RedisController {
         assert sendCommanButton != null : "fx:id=\"sendCommanButton\" was not injected: check your FXML file 'sample.fxml'.";
         assert listView != null : "fx:id=\"listView\" was not injected: check your FXML file 'sample.fxml'.";
 
-        //todo 初始化的时候，获取所有的key 放到 listView中，并添加时间
+        initRedis();
+        setListView();
 
+    }
+
+    private void setListView() {
+        try {
+            WuwuApplication wuwu = RedisApplication.getWuwu();
+            WuwuFutureClient client = wuwu.getClient();
+            List<String> keys = (List)client.keys();
+            List<String> cleanBlankString = keys.stream().map(aa -> {
+                String s = StrUtil.cleanBlank(aa);
+                return s;
+            }).collect(Collectors.toList());
+            ObservableList<Object> observableList = FXCollections.observableArrayList(cleanBlankString);
+            listView.setItems(observableList);
+        }catch (Exception e){
+            LOGGER.error("setListView 出错");
+            throw  new RuntimeException(e);
+        }
+
+
+    }
+
+    private void initRedis() {
+        RedisApplication.initRedisContext();
     }
 }

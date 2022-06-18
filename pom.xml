@@ -16,9 +16,9 @@
 
     <dependencies>
 
-<!--        github 私库中  wuma2020  -->
+        <!--        github 私库中  wuma2020  -->
         <dependency>
-            <groupId>wuma2080</groupId>
+            <groupId>io.github.wuma2020</groupId>
             <artifactId>wuwuwu</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
@@ -30,15 +30,12 @@
             <version>8.0.10</version>
         </dependency>
 
+        <!--        添加工具集  -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.3</version>
+        </dependency>
 
     </dependencies>
-
-    <distributionManagement>
-        <repository>
-            <id>服务id</id>   
-            <name>GitHub 账号名称 Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/Github账号名称/用于保存的仓库名称</url> 
-        </repository>
-    </distributionManagement>
-
 </project>
