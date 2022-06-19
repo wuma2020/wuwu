@@ -16,7 +16,10 @@ import java.util.stream.Collectors;
 import com.wuma.redis.RedisApplication;
 import com.wuwu.base.client.WuwuApplication;
 import com.wuwu.base.client.WuwuFutureClient;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -81,26 +84,74 @@ public class RedisController {
         assert listView != null : "fx:id=\"listView\" was not injected: check your FXML file 'sample.fxml'.";
 
         initRedis();
-        setListView();
+        setListViewItem();
+        addListViewMouseClick();
 
     }
 
-    private void setListView() {
+    /**
+     * 点击鼠标的监听事件
+     */
+    private void addListViewMouseClick() {
+
+        listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                //newValue 为每次点击是当前选中的对象的值，oldValue为上一次选中的值
+                WuwuFutureClient client = RedisApplication.getWuwu().getClient();
+                String s = client.get(String.valueOf(newValue).substring(1,String.valueOf(newValue).length()-1));
+                client.recycleSocket();
+                showArea.setText(s);
+            }catch (Exception e){
+                LOGGER.error("获取key:{}失败",newValue);
+                throw new RuntimeException(e);
+            }
+        });
+
+    }
+
+    /**
+     * 设置key的值
+     * todo 添加点击的监听事件
+     */
+    private void setListViewItem() {
         try {
             WuwuApplication wuwu = RedisApplication.getWuwu();
             WuwuFutureClient client = wuwu.getClient();
             List<String> keys = (List)client.keys();
+            client.recycleSocket();
             List<String> cleanBlankString = keys.stream().map(aa -> {
                 String s = StrUtil.cleanBlank(aa);
                 return s;
             }).collect(Collectors.toList());
             ObservableList<Object> observableList = FXCollections.observableArrayList(cleanBlankString);
+            setKeyListener(observableList);
             listView.setItems(observableList);
         }catch (Exception e){
             LOGGER.error("setListView 出错");
             throw  new RuntimeException(e);
         }
 
+
+    }
+
+    /**
+     *
+     * @param observableList
+     */
+    private void setKeyListener(ObservableList<Object> observableList) {
+
+        observableList.addListener(new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                System.out.println("bnbb");
+            }
+        });
+        observableList.addListener(new ListChangeListener<Object>() {
+            @Override
+            public void onChanged(Change<?> c) {
+                System.out.println("是啊金");
+            }
+        });
 
     }
 
