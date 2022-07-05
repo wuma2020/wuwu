@@ -20,7 +20,7 @@
         <dependency>
             <groupId>io.github.wuma2020</groupId>
             <artifactId>wuwuwu</artifactId>
-            <version>0.0.1</version>
+            <version>0.0.2-SNAPSHOT</version>
         </dependency>
 
         <!--        java fx ui组件    -->

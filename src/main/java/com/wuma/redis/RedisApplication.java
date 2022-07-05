@@ -2,9 +2,9 @@ package com.wuma.redis;
 
 import com.wuwu.base.client.Handler.ArrayHandler;
 import com.wuwu.base.client.WuwuApplication;
-import com.wuwu.base.client.WuwuConfig;
 import com.wuwu.base.client.WuwuFutureClient;
 import com.wuwu.base.client.WuwuPipeline;
+import com.wuwu.base.client.cofig.WuwuConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
