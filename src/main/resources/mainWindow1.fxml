@@ -122,11 +122,11 @@
                         <RowConstraints maxHeight="340.0" minHeight="10.0" prefHeight="338.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <TabPane id="tabPanel" fx:id="tabPanel" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" GridPane.rowSpan="2">
+                        <TabPane id="tabPanel" fx:id="tabPanel" prefHeight="200.0" prefWidth="200.0" GridPane.rowSpan="2">
                            <tabs>
-                              <Tab id="tabInfo" fx:id="tabInfo" text="标签1">
+                              <Tab id="tabInfo" fx:id="tabInfo" text="redis info tab">
                                  <content>
-                                    <JFXTextArea id="tabInfoArea" fx:id="tabInfoArea" text="标签1内容" />
+                                    <JFXTextArea id="tabInfoArea" fx:id="tabInfoArea" text="redis info" />
                                  </content>
                               </Tab>
                               <Tab text="标签2">
