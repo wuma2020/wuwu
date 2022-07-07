@@ -4,6 +4,7 @@ package com.wuma;
 import cn.hutool.core.util.StrUtil;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
+
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -17,6 +18,7 @@ import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
@@ -73,7 +75,8 @@ public class MainController {
 
     }
 
-    @FXML // This method is called by the FXMLLoader when initialization is complete
+    @FXML
+        // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
         assert command != null : "fx:id=\"command\" was not injected: check your FXML file 'mainWindow1.fxml'.";
         assert sendCommand != null : "fx:id=\"sendCommand\" was not injected: check your FXML file 'mainWindow1.fxml'.";
@@ -87,15 +90,13 @@ public class MainController {
         setListViewItem();
         addListViewMouseClick();
         setInfoTable();
-
-
     }
 
     /**
      * 添加redis info tab页面
      */
     private void setInfoTable() {
-        try{
+        try {
             WuwuFutureClient client = RedisApplication.getWuwu().getClient();
             Object info = client.info();
             client.recycleSocket();
@@ -104,7 +105,7 @@ public class MainController {
             tabInfo.setText("redis info");
             tabInfoArea.setDisable(false);
             tabInfoArea.setText((String) info);
-        }catch (Exception e){
+        } catch (Exception e) {
             LOGGER.error("获取info信息错误");
             throw new RuntimeException(e);
         }
@@ -118,18 +119,32 @@ public class MainController {
 
         listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             try {
+
+                if (newValue == null) {
+                    return;
+                }
                 //newValue 为每次点击是当前选中的对象的值，oldValue为上一次选中的值
                 WuwuFutureClient client = RedisApplication.getWuwu().getClient();
-                String s = client.get(String.valueOf(newValue).substring(1,String.valueOf(newValue).length()-1));
+                String s = client.get(String.valueOf(newValue));
                 client.recycleSocket();
-                Tab keyTab = new Tab();
+                Tab keyTab = null;
+
+                FilteredList<Tab> filtered = tabPanel.getTabs()
+                        .filtered(tab -> tab.getText().equals(String.valueOf(newValue)));
+                if(!filtered.isEmpty()){
+                    keyTab = filtered.get(0);
+                    keyTab.setContent(new JFXTextArea(s));
+                    tabPanel.getSelectionModel().select(keyTab);
+                    return;
+                }
+
+                keyTab = new Tab();
                 keyTab.setText(String.valueOf(newValue));
-                JFXTextArea jfxTextArea = new JFXTextArea();
-                jfxTextArea.setText(s);
-                keyTab.setContent(jfxTextArea);
+                keyTab.setContent(new JFXTextArea(s));
                 tabPanel.getTabs().add(keyTab);
-            }catch (Exception e){
-                LOGGER.error("获取key:{}失败",newValue);
+                tabPanel.getSelectionModel().select(keyTab);
+            } catch (Exception e) {
+                LOGGER.error("获取key:{}失败", newValue);
                 throw new RuntimeException(e);
             }
         });
@@ -144,25 +159,23 @@ public class MainController {
         try {
             WuwuApplication wuwu = RedisApplication.getWuwu();
             WuwuFutureClient client = wuwu.getClient();
-            List<String> keys = (List)client.keys();
+            List<String> keys = (List) client.keys();
             client.recycleSocket();
             List<String> cleanBlankString = keys.stream().map(aa -> {
                 String s = StrUtil.cleanBlank(aa);
                 return s;
             }).collect(Collectors.toList());
             ObservableList<Object> observableList = FXCollections.observableArrayList(cleanBlankString);
-            setKeyListener(observableList);
             listView.setItems(observableList);
-        }catch (Exception e){
+        } catch (Exception e) {
             LOGGER.error("setListView 出错");
-            throw  new RuntimeException(e);
+            throw new RuntimeException(e);
         }
 
 
     }
 
     /**
-     *
      * @param observableList
      */
     private void setKeyListener(ObservableList<Object> observableList) {

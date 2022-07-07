@@ -42,9 +42,6 @@ public class RedisApplication {
             wuwuConfig.setHost("localhost");
             wuwuConfig.setPort(6379);
             wuwuConfig.setPassword("123456");
-            WuwuPipeline wuwuPipeline = new WuwuPipeline();
-            wuwuPipeline.addHandler(new ArrayHandler());
-            wuwuConfig.setPipeline(wuwuPipeline);
             wuwu.startApplication(wuwuConfig);
             WuwuFutureClient client = wuwu.getClient();
             Object keys = client.keys();
