@@ -17,6 +17,7 @@ import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
@@ -61,6 +62,11 @@ public class MainController {
 
     @FXML // fx:id="tabInfoArea"
     private JFXTextArea tabInfoArea; // Value injected by FXMLLoader
+
+    @FXML
+    void refreshKeyMethod(ActionEvent event) {
+        setListViewItem();
+    }
 
     @FXML
     void sendCommandMethod(MouseDragEvent event) {
@@ -116,7 +122,12 @@ public class MainController {
                 WuwuFutureClient client = RedisApplication.getWuwu().getClient();
                 String s = client.get(String.valueOf(newValue).substring(1,String.valueOf(newValue).length()-1));
                 client.recycleSocket();
-                tabInfoArea.setText(s);
+                Tab keyTab = new Tab();
+                keyTab.setText(String.valueOf(newValue));
+                JFXTextArea jfxTextArea = new JFXTextArea();
+                jfxTextArea.setText(s);
+                keyTab.setContent(jfxTextArea);
+                tabPanel.getTabs().add(keyTab);
             }catch (Exception e){
                 LOGGER.error("获取key:{}失败",newValue);
                 throw new RuntimeException(e);
