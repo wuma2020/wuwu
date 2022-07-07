@@ -76,12 +76,33 @@ public class MainController {
         assert tabInfo != null : "fx:id=\"tabInfo\" was not injected: check your FXML file 'mainWindow1.fxml'.";
         assert tabInfoArea != null : "fx:id=\"tabInfoArea\" was not injected: check your FXML file 'mainWindow1.fxml'.";
 
+
         initRedis();
         setListViewItem();
         addListViewMouseClick();
+        setInfoTable();
+
 
     }
 
+    /**
+     * 添加redis info tab页面
+     */
+    private void setInfoTable() {
+        try{
+            WuwuFutureClient client = RedisApplication.getWuwu().getClient();
+            Object info = client.info();
+            client.recycleSocket();
+            tabInfo.setDisable(false);
+            tabInfo.setClosable(true);
+            tabInfo.setText("redis info");
+            tabInfoArea.setDisable(false);
+            tabInfoArea.setText((String) info);
+        }catch (Exception e){
+            LOGGER.error("获取info信息错误");
+            throw new RuntimeException(e);
+        }
+    }
 
 
     /**
